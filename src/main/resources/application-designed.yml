@@ -1,0 +1,7 @@
+server.port: 8080
+spring.ai.mcp.server:
+  name: orders
+  instructions: >-
+    Order tools for the signed-in customer of an outdoor gear shop. Every result is about that
+    customer's own orders. Cancelling is a two-step call: preview first, then confirm=true once the
+    customer agrees.

@@ -1,0 +1,20 @@
+spring:
+  application.name: mcp-orders-server
+  main.banner-mode: off
+  profiles.default: designed
+  ai.mcp.server:
+    protocol: STREAMABLE
+    type: SYNC
+    version: 0.1.0
+    # Tools are registered explicitly (see OrdersServerApplication), not by classpath scanning.
+    annotation-scanner.enabled: false
+    capabilities:
+      tool: true
+      resource: false
+      prompt: false
+      completion: false
+    streamable-http.mcp-endpoint: /mcp
+
+logging.level:
+  root: WARN
+  io.github.moalrubaie: INFO

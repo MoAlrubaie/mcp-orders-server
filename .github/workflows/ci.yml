@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Tests (Java ${{ matrix.java }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: ["21", "25"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: gradle/actions/wrapper-validation@v6
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: gradle
+      - name: Check formatting
+        run: ./gradlew --console=plain spotlessCheck
+      - name: Unit, MCP and end-to-end tests
+        run: ./gradlew --console=plain test
+      - name: Demo (both servers in-process)
+        shell: bash
+        run: |
+          set -o pipefail
+          make demo | tee demo.txt
+          { echo '## Demo'; echo '```'; cat demo.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"

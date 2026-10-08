@@ -1,0 +1,32 @@
+name: Live agent
+
+# Manual only: it calls the Claude API and needs an ANTHROPIC_API_KEY repository secret.
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: Claude model ID
+        default: claude-opus-5-5
+
+permissions:
+  contents: read
+
+jobs:
+  agent:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+      - name: Live agent
+        shell: bash
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MODEL: ${{ inputs.model }}
+        run: |
+          set -o pipefail
+          make agent | tee agent.txt
+          { echo '## Live agent'; echo '```'; cat agent.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
